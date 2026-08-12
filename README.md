@@ -1,34 +1,207 @@
-# Playstore More Apps - Parser, Dual-Cache & WebView Engine (GitHub)
+# Playstore More Apps - Parser, Dual-Cache & WebView Engine
+
+Automated Google Play Store Developer Page parser powered by GitHub Actions. Generates **Dual-Cache (Global/English & Indonesia)**, automatically categorizes **Games at the top & Apps at the bottom**, formats titles with Title Case (acronym preservation), and serves an ultra-lightweight **WebView Single-Page Application (SPA)** interface.
+
+---
+
+## 🌐 Live Web View URL (GitHub Pages)
+
+Official production web view loaded by Flutter & Kotlin clients:
+
+👉 **[https://86xx.github.io/PLAYSTORE-DEV-PAGE/demo_preview.html](https://86xx.github.io/PLAYSTORE-DEV-PAGE/demo_preview.html)**
+
+---
+
+## 🚀 Key Features
+
+1. **Near-Zero Client Overhead**: Flutter and Kotlin clients load a single WebView widget. No complex JSON parsing, no heavy list rendering, and zero memory overhead.
+2. **Zero Client Update**: Change the UI, theme, or layout anytime by updating the HTML file on GitHub. All client apps update instantly without releasing new APKs.
+3. **Multi-Layer Caching (Instant & Offline Ready)**:
+   - **Layer 1 (Chromium HTTP Disk Cache)**: Caches icons and HTML on the user's device disk.
+   - **Layer 2 (LocalStorage Caching)**: Stores JSON data in `localStorage` for instant 0-second loading.
+   - **Layer 3 (Offline Fallback)**: Full offline support with embedded data fallback.
+4. **Automatic Categorization**:
+   - 🎮 **Games (11)**: Placed in the **TOP** section.
+   - 📱 **Apps (5)**: Placed in the **BOTTOM** section.
+5. **Dynamic Language Switcher**: Auto-detects device locale (`navigator.language`) with interactive `🇮🇩 ID` and `🌐 EN` toggle buttons.
+6. **Title Normalization**: Standardizes ALL-CAPS titles into Title Case while preserving acronyms (`TTS`, `AI`, `PDF`, `VPN`, `HD`, `4K`, `3D`, `UI`).
+
+---
+
+## 🛠️ Dual-Cache Architecture
+
+The parser generates two static JSON files under the `cache/` directory:
+
+1. **`cache/apps.json`** ➡️ English / Global (`lang: 'en'`, `country: 'us'`)
+2. **`cache/apps-id.json`** ➡️ Indonesian (`lang: 'id'`, `country: 'id'`)
+
+---
+
+## 📱 Client Integration
+
+### 1. Flutter (`flutter-script/lib/more_apps_page.dart`)
+```dart
+import 'package:flutter/material.dart';
+import 'package:webview_flutter/webview_flutter.dart';
+
+const String kMoreAppsHtmlUrl =
+    'https://86xx.github.io/PLAYSTORE-DEV-PAGE/demo_preview.html';
+
+class MoreAppsPage extends StatefulWidget {
+  const MoreAppsPage({super.key});
+
+  @override
+  State<MoreAppsPage> createState() => _MoreAppsPageState();
+}
+
+class _MoreAppsPageState extends State<MoreAppsPage> {
+  late final WebViewController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = WebViewController()
+      ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..setBackgroundColor(const Color(0xFF0F172A))
+      ..loadRequest(Uri.parse(kMoreAppsHtmlUrl));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFF0F172A),
+      body: SafeArea(child: WebViewWidget(controller: _controller)),
+    );
+  }
+}
+```
+
+### 2. Kotlin / Android (`kotlin-script/.../MoreAppsActivity.kt`)
+```kotlin
+package id.livumedia.moreapps
+
+import android.annotation.SuppressLint
+import android.content.Intent
+import android.net.Uri
+import android.os.Bundle
+import android.webkit.WebResourceRequest
+import android.webkit.WebView
+import android.webkit.WebViewClient
+import androidx.appcompat.app.AppCompatActivity
+
+private const val MORE_APPS_HTML_URL =
+    "https://86xx.github.io/PLAYSTORE-DEV-PAGE/demo_preview.html"
+
+class MoreAppsActivity : AppCompatActivity() {
+
+    @SuppressLint("SetJavaScriptEnabled")
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val webView = WebView(this).apply {
+            settings.javaScriptEnabled = true
+            settings.domStorageEnabled = true
+            webViewClient = object : WebViewClient() {
+                override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
+                    val url = request?.url?.toString() ?: return false
+                    if (url.contains("play.google.com") || url.startsWith("market://")) {
+                        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+                        return true
+                    }
+                    return false
+                }
+            }
+            loadUrl(MORE_APPS_HTML_URL)
+        }
+        setContentView(webView)
+    }
+}
+```
+
+---
+
+## 📄 License
+
+Distributed under the MIT License. See [`LICENSE`](LICENSE) for more information.
+
+<br>
+
+---
+---
+
+<br>
+
+# Bahasa Indonesia
 
 Project parser halaman developer Google Play Store otomatis berbasis GitHub Actions yang menghasilkan **Dual-Cache (Global/English & Indonesia)**, memilah kategori **Games di atas & Apps di bawah**, memformat judul dengan standar Title Case (preservasi akronim), serta menyediakan tampilan antarmuka **WebView Single-Page Application (SPA)** super ringan.
 
 ---
 
-## Live Web View URL (GitHub Pages)
+## 🌐 Live Web View URL (GitHub Pages)
 
 Tampilan antarmuka resmi yang di-load oleh client Flutter & Kotlin:
 
-🌐 **[https://86xx.github.io/PLAYSTORE-DEV-PAGE/demo_preview.html](https://86xx.github.io/PLAYSTORE-DEV-PAGE/demo_preview.html)**
+👉 **[https://86xx.github.io/PLAYSTORE-DEV-PAGE/demo_preview.html](https://86xx.github.io/PLAYSTORE-DEV-PAGE/demo_preview.html)**
 
 ---
 
-## Arsitektur WebView & Multi-Layer Caching
+## 🚀 Fitur Utama
 
-### Keunggulan Arsitektur WebView:
 1. **Beban Client Sangat Ringan (Near-Zero Overhead)**: Client Flutter maupun Kotlin hanya memuat 1 widget WebView. Tidak ada beban parsing JSON, rendering list kompleks, atau penggunaan memori berlebih.
 2. **Zero Client Update**: Jika ada perubahan tampilan UI, warna, atau layout di masa mendatang, cukup ubah file HTML di GitHub. Seluruh aplikasi pengguna akan langsung mendapatkan tampilan terbaru tanpa perlu update APK.
 3. **Multi-Layer Caching (Instant Load & Offline Ready)**:
    - **Layer 1 (Chromium HTTP Disk Cache)**: WebView menyimpan aset gambar dan HTML di disk lokal HP.
    - **Layer 2 (LocalStorage Caching)**: Data JSON disimpan di `localStorage` WebView untuk render instan 0 detik.
    - **Layer 3 (Offline Fallback)**: Tetap dapat dibuka walaupun HP sedang offline tanpa koneksi internet.
+4. **Pengurutan Kategori Otomatis**:
+   - 🎮 **Games (11)**: Selalu berada di kelompok **ATAS**.
+   - 📱 **Apps (5)**: Selalu berada di kelompok **BAWAH**.
+5. **Tombol Toggle Bahasa (🇮🇩 ID / 🌐 EN)**: Otomatis membaca bahasa HP pengguna (`navigator.language`) serta menyediakan tombol toggle manual.
+6. **Normalisasi Judul**: Merapikan judul ALL-CAPS menjadi Title Case dengan preservasi akronim (`TTS`, `AI`, `PDF`, `VPN`, `HD`, `4K`, `3D`, `UI`).
 
 ---
 
-## Setup GitHub Actions & Pages
+## 🛠️ Arsitektur Dual-Cache
 
-1. Repository berstatus **Public**: `https://github.com/86xx/PLAYSTORE-DEV-PAGE`.
-2. GitHub Pages diaktifkan pada **Settings > Pages > Branch `main` > Folder `/ (root)`**.
-3. Tambahkan **Repository Secrets** (Settings > Secrets and variables > Actions):
-   - `MAIL_USERNAME`: Email Gmail pengirim notifikasi.
-   - `MAIL_PASSWORD`: App Password Gmail pengirim.
-4. Workflow akan otomatis mengeksekusi parser dan meng-commit file cache & HTML baru secara teratur.
+Parser menghasilkan 2 file JSON statis di folder `cache/`:
+
+1. **`cache/apps.json`** ➡️ Bahasa English / Global (`lang: 'en'`, `country: 'us'`)
+2. **`cache/apps-id.json`** ➡️ Bahasa Indonesia (`lang: 'id'`, `country: 'id'`)
+
+---
+
+## ⚙️ Struktur Setting (`config/settings.json`)
+
+Semua setting non-rahasia ada terpusat di `config/settings.json`:
+
+```json
+{
+  "developerId": "7833833743949360412",
+  "notifyEmails": ["bekti.playstore@gmail.com"],
+  "frequencyDays": 7,
+  "maxApps": 200,
+  "appIds": [
+    "id.livumedia.ttsseru",
+    "id.livumedia.fruitblast",
+    "id.livumedia.parkingescape",
+    "id.livumedia.candyblast",
+    "id.livumedia.arrowpuzzle",
+    "id.livumedia.cubematch",
+    "id.livumedia.jewelmatch",
+    "com.axlhostdev.tankbubbleshooter",
+    "com.axlhostdev.ludoknight",
+    "com.axlhostdev.silatkata",
+    "com.axlhostdev.blogspot",
+    "id.livumedia.livuphotoeditor",
+    "id.livumedia.pdftools",
+    "id.livumedia.vpnunlimited",
+    "id.livumedia.youmakeaishortstools",
+    "id.wallpaperhd.anime"
+  ]
+}
+```
+
+---
+
+## 📄 Lisensi
+
+Didistribusikan di bawah Lisensi MIT. Lihat [`LICENSE`](LICENSE) untuk informasi lebih lanjut.
