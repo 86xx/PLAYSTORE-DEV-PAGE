@@ -327,6 +327,11 @@
       fill: currentColor;
     }
 
+    a.card {
+      text-decoration: none;
+      color: inherit;
+    }
+
     footer a {
       color: var(--text-main);
       text-decoration: underline;
@@ -483,7 +488,7 @@
     function createCardHTML(item) {
       const btnLabel = currentLang === 'id' ? 'Buka Play Store' : 'Open Play Store';
       return `
-        <div class="card" onclick="openStore('${item.url}')">
+        <a class="card" href="${item.url}" target="_blank" rel="noopener">
           <div class="card-header">
             <img src="${item.icon}" alt="${item.title}" class="app-icon" loading="lazy">
             <div class="app-meta">
@@ -492,11 +497,11 @@
             </div>
           </div>
           <p class="app-summary">${item.summary}</p>
-          <button class="btn-install" type="button">
+          <div class="btn-install">
             <svg viewBox="0 0 24 24"><path d="M5 3l14 9-14 9V3z"/></svg>
             ${btnLabel}
-          </button>
-        </div>
+          </div>
+        </a>
       `;
     }
 
