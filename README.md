@@ -132,6 +132,14 @@ class MoreAppsActivity : AppCompatActivity() {
 
 ---
 
+## 🛠️ Credits & Dependencies
+
+This project utilizes the following open-source Node.js library for fetching Play Store metadata:
+
+- **[google-play-scraper](https://www.npmjs.com/package/google-play-scraper)** (`^10.1.3`) - Node.js scraper library for Google Play Store used to parse app icons, titles, summaries, and developer listings.
+
+---
+
 ## 📄 License
 
 Distributed under the MIT License. See [`LICENSE`](LICENSE) for more information.
@@ -225,6 +233,14 @@ Semua setting non-rahasia ada terpusat di `config/settings.json`:
   ]
 }
 ```
+
+---
+
+## 🛠️ Kredit & Dependensi
+
+Project ini memanfaatkan library open-source Node.js berikut untuk me-retrieve metadata dari Play Store:
+
+- **[google-play-scraper](https://www.npmjs.com/package/google-play-scraper)** (`^10.1.3`) - Library Node.js scraper Google Play Store yang digunakan untuk mengambil ikon, judul, ringkasan deskripsi, dan daftar aplikasi developer.
 
 ---
 
