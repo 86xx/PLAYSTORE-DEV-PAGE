@@ -8,7 +8,7 @@ Automated Google Play Store Developer Page parser powered by GitHub Actions. Gen
 
 Official production web view loaded by Flutter & Kotlin clients:
 
-👉 **[https://86xx.github.io/PLAYSTORE-DEV-PAGE/demo_preview.html](https://86xx.github.io/PLAYSTORE-DEV-PAGE/demo_preview.html)**
+👉 **[https://86xx.github.io/PLAYSTORE-DEV-PAGE/list-apps.html](https://86xx.github.io/PLAYSTORE-DEV-PAGE/list-apps.html)**
 
 ---
 
@@ -153,7 +153,7 @@ Project parser halaman developer Google Play Store otomatis berbasis GitHub Acti
 
 Tampilan antarmuka resmi yang di-load oleh client Flutter & Kotlin:
 
-👉 **[https://86xx.github.io/PLAYSTORE-DEV-PAGE/demo_preview.html](https://86xx.github.io/PLAYSTORE-DEV-PAGE/demo_preview.html)**
+👉 **[https://86xx.github.io/PLAYSTORE-DEV-PAGE/list-apps.html](https://86xx.github.io/PLAYSTORE-DEV-PAGE/list-apps.html)**
 
 ---
 

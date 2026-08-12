@@ -35,7 +35,7 @@ jobs:
         run: |
           git config user.name "playstore-cache-bot"
           git config user.email "bot@users.noreply.github.com"
-          git add cache/apps.json cache/apps-id.json cache/apps.schema.json cache/last-run.json demo_preview.html
+          git add cache/apps.json cache/apps-id.json cache/apps.schema.json cache/last-run.json list-apps.html demo_preview.html
           git diff --cached --quiet || git commit -m "chore: update apps cache ($(date -u +%Y-%m-%d))"
           git push
 
