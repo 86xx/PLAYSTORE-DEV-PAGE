@@ -176,7 +176,7 @@ Semua setting non-rahasia ada terpusat di `config/settings.json`:
 ```json
 {
   "developerId": "7833833743949360412",
-  "notifyEmails": ["bekti.playstore@gmail.com"],
+  "notifyEmails": [],
   "frequencyDays": 7,
   "maxApps": 200,
   "appIds": [
