@@ -57,8 +57,8 @@ The parser generates two static JSON files under the `cache/` directory:
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
-const String kMoreAppsHtmlUrl =
-    'https://86xx.github.io/PLAYSTORE-DEV-PAGE/demo_preview.html';
+const String kRemoteListAppsUrl =
+    'https://raw.githubusercontent.com/86xx/PLAYSTORE-DEV-PAGE/main/list-apps.html';
 
 class MoreAppsPage extends StatefulWidget {
   const MoreAppsPage({super.key});
@@ -102,8 +102,8 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.appcompat.app.AppCompatActivity
 
-private const val MORE_APPS_HTML_URL =
-    "https://86xx.github.io/PLAYSTORE-DEV-PAGE/demo_preview.html"
+private const val REMOTE_LIST_APPS_URL =
+    "https://raw.githubusercontent.com/86xx/PLAYSTORE-DEV-PAGE/main/list-apps.html"
 
 class MoreAppsActivity : AppCompatActivity() {
 
