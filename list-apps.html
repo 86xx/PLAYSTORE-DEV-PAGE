@@ -327,11 +327,15 @@
       fill: currentColor;
     }
 
-    footer {
-      text-align: center;
-      margin-top: 48px;
-      color: var(--text-muted);
-      font-size: 0.8rem;
+    footer a {
+      color: var(--text-main);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      transition: color 0.2s ease;
+    }
+
+    footer a:hover {
+      color: #6366f1;
     }
   </style>
 </head>
@@ -367,7 +371,7 @@
     </div>
 
     <footer>
-      <p>© 2026 LIVUMEDIA.</p>
+      <p>© 2026 <a href="https://play.google.com/store/apps/dev?id=7833833743949360412" target="_blank" rel="noopener">LIVUMEDIA</a>.</p>
     </footer>
   </div>
 
