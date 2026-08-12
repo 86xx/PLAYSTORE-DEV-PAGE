@@ -15,5 +15,22 @@
 
   "maxApps": 200,
 
-  "_maxApps_note": "Batas maksimal jumlah app yang diambil dari halaman developer."
+  "appIds": [
+    "id.livumedia.ttsseru",
+    "id.livumedia.fruitblast",
+    "id.livumedia.parkingescape",
+    "id.livumedia.candyblast",
+    "id.livumedia.arrowpuzzle",
+    "id.livumedia.cubematch",
+    "id.livumedia.jewelmatch",
+    "com.axlhostdev.tankbubbleshooter",
+    "com.axlhostdev.ludoknight",
+    "com.axlhostdev.silatkata",
+    "com.axlhostdev.blogspot",
+    "id.livumedia.livuphotoeditor",
+    "id.livumedia.pdftools",
+    "id.livumedia.vpnunlimited",
+    "id.livumedia.youmakeaishortstools",
+    "id.wallpaperhd.anime"
+  ]
 }

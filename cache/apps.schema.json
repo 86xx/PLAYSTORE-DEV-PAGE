@@ -3,5 +3,6 @@
   "title": "string",
   "icon": "string",
   "summary": "string",
-  "url": "string"
+  "url": "string",
+  "type": "string"
 }

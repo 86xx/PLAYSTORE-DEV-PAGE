@@ -34,6 +34,7 @@ const EXPECTED_SCHEMA = {
   icon: 'string',
   summary: 'string',
   url: 'string',
+  type: 'string',
 };
 
 function loadSettings() {
@@ -108,23 +109,53 @@ function getScraperVersion() {
 async function main() {
   const settings = loadSettings();
 
-  console.log('Fetching developer page untuk devId:', settings.developerId);
-  const rawApps = await fetchWithRetry(() =>
-    gplay.developer({
-      devId: settings.developerId,
-      num: settings.maxApps || 200,
-    })
-  );
+  let rawApps = [];
 
-  const newApps = rawApps.map((a) => ({
-    appId: a.appId,
-    title: a.title,
-    icon: a.icon,
-    summary: a.summary || '',
-    url: a.url,
-  }));
+  if (Array.isArray(settings.appIds) && settings.appIds.length > 0) {
+    console.log(
+      `Fetching ${settings.appIds.length} apps dari daftar appIds di config/settings.json...`
+    );
+    rawApps = await fetchWithRetry(() =>
+      Promise.all(
+        settings.appIds.map((id) =>
+          gplay.app({ appId: id, lang: 'id', country: 'id' }).catch((err) => {
+            console.warn(`⚠️ Warning: Gagal fetch app ${id}: ${err.message}`);
+            return null;
+          })
+        )
+      ).then((list) => list.filter(Boolean))
+    );
+  } else {
+    console.log('Fetching developer page untuk devId:', settings.developerId);
+    rawApps = await fetchWithRetry(() =>
+      gplay.developer({
+        devId: settings.developerId,
+        num: settings.maxApps || 200,
+      })
+    );
+  }
 
-  const check = validateSchema(newApps);
+  const mappedApps = rawApps.map((a) => {
+    const isGame =
+      (a.genreId && a.genreId.startsWith('GAME_')) ||
+      (a.genre && a.genre.toLowerCase().includes('game')) ||
+      (a.appId && (a.appId.includes('game') || a.appId.includes('puzzle') || a.appId.includes('match') || a.appId.includes('blast') || a.appId.includes('shooter') || a.appId.includes('ludo') || a.appId.includes('silat')));
+
+    return {
+      appId: a.appId,
+      title: a.title,
+      icon: a.icon,
+      summary: a.summary || '',
+      url: a.url,
+      type: isGame ? 'GAME' : 'APP',
+    };
+  });
+
+  const games = mappedApps.filter((a) => a.type === 'GAME');
+  const apps = mappedApps.filter((a) => a.type === 'APP');
+  const sortedApps = [...games, ...apps];
+
+  const check = validateSchema(sortedApps);
   fs.mkdirSync(CACHE_DIR, { recursive: true });
 
   if (!check.valid) {
@@ -152,7 +183,7 @@ ${JSON.stringify(rawApps[0] || {}, null, 2)}
     return;
   }
 
-  fs.writeFileSync(CACHE_PATH, JSON.stringify(newApps, null, 2));
+  fs.writeFileSync(CACHE_PATH, JSON.stringify(sortedApps, null, 2));
   fs.writeFileSync(SCHEMA_PATH, JSON.stringify(EXPECTED_SCHEMA, null, 2));
   fs.writeFileSync(
     LAST_RUN_PATH,
@@ -162,7 +193,7 @@ ${JSON.stringify(rawApps[0] || {}, null, 2)}
   if (fs.existsSync(WARNING_PATH)) fs.unlinkSync(WARNING_PATH);
 
   console.log(
-    `✅ Berhasil parse ${newApps.length} apps, skema valid, cache diupdate.`
+    `✅ Berhasil parse ${sortedApps.length} items (${games.length} Games di atas, ${apps.length} Apps di bawah). Cache diupdate.`
   );
 }
 
