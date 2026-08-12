@@ -1,0 +1,12 @@
+{
+  "name": "playstore-more-apps-parser",
+  "version": "1.0.0",
+  "description": "Parser manual untuk halaman developer Play Store, dengan validasi skema cache",
+  "private": true,
+  "scripts": {
+    "parse": "node scripts/parse-playstore.js"
+  },
+  "dependencies": {
+    "google-play-scraper": "^9.4.0"
+  }
+}

@@ -1,0 +1,82 @@
+name: Parse Play Store
+
+on:
+  workflow_dispatch:      # tombol "Run workflow" manual di tab Actions - selalu jalan
+  schedule:
+    - cron: '0 3 * * *'   # dicek tiap hari jam 03:00 UTC, tapi hanya benar-benar
+                           # parse kalau sudah lewat "frequencyDays" di config/settings.json
+
+jobs:
+  parse:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install google-play-scraper
+
+      - name: Cek apakah sudah waktunya parse
+        id: check
+        run: node scripts/check-schedule.js
+        env:
+          GITHUB_EVENT_NAME: ${{ github.event_name }}
+
+      - name: Run parser
+        if: steps.check.outputs.should_run == 'true'
+        id: run_parser
+        run: node scripts/parse-playstore.js
+
+      - name: Commit cache jika valid
+        if: steps.check.outputs.should_run == 'true' && success()
+        run: |
+          git config user.name "playstore-cache-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add cache/apps.json cache/apps.schema.json cache/last-run.json
+          git diff --cached --quiet || git commit -m "chore: update apps cache ($(date -u +%Y-%m-%d))"
+          git push
+
+      - name: Commit warning jika skema berubah
+        if: steps.check.outputs.should_run == 'true' && failure()
+        run: |
+          git config user.name "playstore-cache-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add cache/SCHEMA_WARNING.md
+          git diff --cached --quiet || git commit -m "chore: schema warning - cache lama tetap dipakai"
+          git push
+
+      - name: Baca daftar email notifikasi dari settings.json
+        if: steps.check.outputs.should_run == 'true' && failure()
+        id: recipients
+        run: |
+          EMAILS=$(node -e "console.log(require('./config/settings.json').notifyEmails.join(','))")
+          echo "list=$EMAILS" >> "$GITHUB_OUTPUT"
+
+      - name: Kirim email peringatan jika skema berubah
+        if: steps.check.outputs.should_run == 'true' && failure()
+        continue-on-error: true
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+          subject: '⚠️ Play Store parser gagal - skema berubah'
+          to: ${{ steps.recipients.outputs.list }}
+          from: Playstore Cache Bot
+          body: |
+            Parser gagal memvalidasi skema hasil parse halaman developer Play Store.
+
+            Cache LAMA tetap dipakai aplikasi (tidak ditimpa), jadi app kamu aman
+            untuk sementara. Tapi perlu dicek dan diperbaiki:
+
+            1. Buka repo: ${{ github.server_url }}/${{ github.repository }}
+            2. Lihat file cache/SCHEMA_WARNING.md untuk detail field yang berubah
+            3. Lihat log run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+            4. Perbaiki scripts/parse-playstore.js sesuai struktur data terbaru
+            5. Jalankan ulang workflow secara manual setelah diperbaiki
+
+            (Email otomatis dari GitHub Actions)

@@ -1,0 +1,19 @@
+{
+  "_comment": "File setting terpusat. JANGAN taruh password di sini - password tetap di GitHub Secrets (MAIL_USERNAME, MAIL_PASSWORD).",
+
+  "developerId": "GANTI_DENGAN_DEV_ID_PLAY_STORE",
+
+  "notifyEmails": [
+    "email1@example.com",
+    "email2@example.com",
+    "email3@example.com"
+  ],
+
+  "frequencyDays": 7,
+
+  "_frequencyDays_note": "Workflow dicek tiap hari, tapi parse hanya benar-benar jalan kalau sudah lewat 'frequencyDays' hari sejak run terakhir yang sukses. Ubah angka ini kapan pun tanpa perlu edit file workflow (.yml).",
+
+  "maxApps": 200,
+
+  "_maxApps_note": "Batas maksimal jumlah app yang diambil dari halaman developer."
+}

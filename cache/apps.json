@@ -1,0 +1,9 @@
+[
+  {
+    "appId": "id.livumedia.contoh",
+    "title": "Contoh App",
+    "icon": "https://play-lh.googleusercontent.com/contoh-icon",
+    "summary": "Ini contoh data cache sebelum parser pertama kali dijalankan.",
+    "url": "https://play.google.com/store/apps/details?id=id.livumedia.contoh"
+  }
+]
