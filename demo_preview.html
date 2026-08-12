@@ -399,6 +399,10 @@
           DATA_EN = await resEN.json();
           try { localStorage.setItem('cache_apps_en', JSON.stringify(DATA_EN)); } catch (_) {}
         }
+      } catch (e) {
+        console.warn("Using local cache fallback");
+      }
+
       renderList();
     }
 
