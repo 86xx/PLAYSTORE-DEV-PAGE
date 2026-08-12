@@ -1,81 +1,34 @@
-# Playstore More Apps - Parser & Dual-Cache Generator (GitHub)
+# Playstore More Apps - Parser, Dual-Cache & WebView Engine (GitHub)
 
-Project parser halaman developer Google Play Store otomatis berbasis GitHub Actions yang menghasilkan **Dual-Cache (Global/English & Indonesia)**, memilah kategori **Games di atas & Apps di bawah**, memformat judul dengan standar Title Case (preservasi akronim), serta menyediakan referensi visual tampilan UI output.
-
-## Referensi Visual Output UI
-
-Visual antarmuka (UI/UX) akhir yang harus diterapkan pada client **Flutter** maupun **Kotlin/Android** mengacu pada file referensi:
-
-📄 **[demo_preview.html](file:///e:/002_Android_2026/006_APK/01_PLAYSTORE-DEVPAGE/demo_preview.html)**
-
-### Fitur Tampilan UI Output:
-1. **Pengurutan Kategori**:
-   - 🎮 **Games**: Selalu berada di urutan **ATAS**.
-   - 📱 **Apps**: Selalu berada di urutan **BAWAH**.
-2. **Badge Tipe**: Badge visual membedakan `GAME` (gradien indigo/purple) dan `APP` (gradien emerald/cyan).
-3. **Lokalisasi Bahasa**:
-   - Menggunakan judul & ringkasan bahasa Indonesia untuk device dengan locale `id`.
-   - Menggunakan judul & ringkasan bahasa English untuk device dengan locale `en` / Global.
-4. **Interaksi Native**: Tap/klik pada card membuka intent halaman Play Store resmi (`https://play.google.com/store/apps/details?id=...`).
+Project parser halaman developer Google Play Store otomatis berbasis GitHub Actions yang menghasilkan **Dual-Cache (Global/English & Indonesia)**, memilah kategori **Games di atas & Apps di bawah**, memformat judul dengan standar Title Case (preservasi akronim), serta menyediakan tampilan antarmuka **WebView Single-Page Application (SPA)** super ringan.
 
 ---
 
-## Arsitektur Dual-Cache
+## Live Web View URL (GitHub Pages)
 
-Parser menghasilkan 2 file JSON statis di folder `cache/`:
+Tampilan antarmuka resmi yang di-load oleh client Flutter & Kotlin:
 
-1. **`cache/apps.json`** ➡️ Bahasa English / Global (`lang: 'en'`, `country: 'us'`)
-2. **`cache/apps-id.json`** ➡️ Bahasa Indonesia (`lang: 'id'`, `country: 'id'`)
-
----
-
-## Struktur Setting (`config/settings.json`)
-
-Semua setting non-rahasia ada terpusat di `config/settings.json`:
-
-```json
-{
-  "developerId": "7833833743949360412",
-  "notifyEmails": ["bekti.playstore@gmail.com"],
-  "frequencyDays": 7,
-  "maxApps": 200,
-  "appIds": [
-    "id.livumedia.ttsseru",
-    "id.livumedia.fruitblast",
-    "id.livumedia.parkingescape",
-    "id.livumedia.candyblast",
-    "id.livumedia.arrowpuzzle",
-    "id.livumedia.cubematch",
-    "id.livumedia.jewelmatch",
-    "com.axlhostdev.tankbubbleshooter",
-    "com.axlhostdev.ludoknight",
-    "com.axlhostdev.silatkata",
-    "com.axlhostdev.blogspot",
-    "id.livumedia.livuphotoeditor",
-    "id.livumedia.pdftools",
-    "id.livumedia.vpnunlimited",
-    "id.livumedia.youmakeaishortstools",
-    "id.wallpaperhd.anime"
-  ]
-}
-```
+🌐 **[https://86xx.github.io/PLAYSTORE-DEV-PAGE/demo_preview.html](https://86xx.github.io/PLAYSTORE-DEV-PAGE/demo_preview.html)**
 
 ---
 
-## Standar Penulisan Judul (Title Normalization)
+## Arsitektur WebView & Multi-Layer Caching
 
-Parser otomatis merapikan judul aplikasi:
-- Judul berhuruf besar semua (*ALL CAPS*) diubah menjadi **Title Case**.
-- Akronim/singkatan populer tetap dipertahankan dalam huruf kapital (`TTS`, `AI`, `PDF`, `VPN`, `HD`, `4K`, `3D`, `UI`).
-- Contoh: `TTS SERU - TEKA TEKI SILANG` ➡️ `TTS Seru - Teka Teki Silang`.
+### Keunggulan Arsitektur WebView:
+1. **Beban Client Sangat Ringan (Near-Zero Overhead)**: Client Flutter maupun Kotlin hanya memuat 1 widget WebView. Tidak ada beban parsing JSON, rendering list kompleks, atau penggunaan memori berlebih.
+2. **Zero Client Update**: Jika ada perubahan tampilan UI, warna, atau layout di masa mendatang, cukup ubah file HTML di GitHub. Seluruh aplikasi pengguna akan langsung mendapatkan tampilan terbaru tanpa perlu update APK.
+3. **Multi-Layer Caching (Instant Load & Offline Ready)**:
+   - **Layer 1 (Chromium HTTP Disk Cache)**: WebView menyimpan aset gambar dan HTML di disk lokal HP.
+   - **Layer 2 (LocalStorage Caching)**: Data JSON disimpan di `localStorage` WebView untuk render instan 0 detik.
+   - **Layer 3 (Offline Fallback)**: Tetap dapat dibuka walaupun HP sedang offline tanpa koneksi internet.
 
 ---
 
-## Setup GitHub Actions
+## Setup GitHub Actions & Pages
 
-1. Push folder `github-script` ke repository GitHub Anda.
-2. Tambahkan **Repository Secrets** (Settings > Secrets and variables > Actions):
+1. Repository berstatus **Public**: `https://github.com/86xx/PLAYSTORE-DEV-PAGE`.
+2. GitHub Pages diaktifkan pada **Settings > Pages > Branch `main` > Folder `/ (root)`**.
+3. Tambahkan **Repository Secrets** (Settings > Secrets and variables > Actions):
    - `MAIL_USERNAME`: Email Gmail pengirim notifikasi.
    - `MAIL_PASSWORD`: App Password Gmail pengirim.
-3. Atur **Workflow permissions** ke **Read and write permissions**.
-4. Workflow akan otomatis mengeksekusi parser atau dapat dijalankan manual via tab **Actions** > **Parse Play Store** > **Run workflow**.
+4. Workflow akan otomatis mengeksekusi parser dan meng-commit file cache & HTML baru secara teratur.
