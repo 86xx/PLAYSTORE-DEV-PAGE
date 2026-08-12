@@ -17,7 +17,8 @@
 
 const fs = require('fs');
 const path = require('path');
-const gplay = require('google-play-scraper');
+const rawGplay = require('google-play-scraper');
+const gplay = rawGplay.developer ? rawGplay : (rawGplay.default || rawGplay);
 
 const ROOT = path.join(__dirname, '..');
 const SETTINGS_PATH = path.join(ROOT, 'config', 'settings.json');
@@ -167,6 +168,11 @@ ${JSON.stringify(rawApps[0] || {}, null, 2)}
 
 main().catch((err) => {
   console.error('❌ Parse error:', err.message);
+  try {
+    fs.mkdirSync(CACHE_DIR, { recursive: true });
+    const msg = `## ⚠️ Parse gagal - Unexpected Error (${new Date().toISOString()})\n\n**Error:** ${err.message}\n`;
+    fs.writeFileSync(WARNING_PATH, msg);
+  } catch (_) {}
   process.exitCode = 1;
 });
 

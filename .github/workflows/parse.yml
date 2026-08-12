@@ -42,11 +42,13 @@ jobs:
       - name: Commit warning jika skema berubah
         if: steps.check.outputs.should_run == 'true' && failure()
         run: |
-          git config user.name "playstore-cache-bot"
-          git config user.email "bot@users.noreply.github.com"
-          git add cache/SCHEMA_WARNING.md
-          git diff --cached --quiet || git commit -m "chore: schema warning - cache lama tetap dipakai"
-          git push
+          if [ -f cache/SCHEMA_WARNING.md ]; then
+            git config user.name "playstore-cache-bot"
+            git config user.email "bot@users.noreply.github.com"
+            git add cache/SCHEMA_WARNING.md
+            git diff --cached --quiet || git commit -m "chore: schema warning - cache lama tetap dipakai"
+            git push
+          fi
 
       - name: Baca daftar email notifikasi dari settings.json
         if: steps.check.outputs.should_run == 'true' && failure()
