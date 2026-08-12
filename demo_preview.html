@@ -295,13 +295,7 @@
 
   <div class="container">
     <header>
-      <div class="dev-badge">
-        <span>🎮 Developer</span>
-        <span>•</span>
-        <span>LIVUMEDIA</span>
-      </div>
       <h1>More Games & Apps</h1>
-      <p class="subtitle" id="subtitle-text">Temukan koleksi game dan aplikasi menarik dari LIVUMEDIA</p>
     </header>
 
     <div class="controls-bar">
@@ -425,7 +419,6 @@
       const gridApps = document.getElementById('grid-apps');
       const secGames = document.getElementById('section-games');
       const secApps = document.getElementById('section-apps');
-      const subtitleText = document.getElementById('subtitle-text');
       const tabAll = document.getElementById('tab-all');
 
       const games = data.filter(item => item.type === 'GAME');
@@ -435,10 +428,6 @@
       if (tabAll) {
         tabAll.textContent = currentLang === 'id' ? `Semua (${totalCount})` : `All (${totalCount})`;
       }
-
-      subtitleText.textContent = currentLang === 'id' 
-        ? 'Temukan koleksi game dan aplikasi menarik dari LIVUMEDIA' 
-        : 'Explore the collection of exciting games and apps by LIVUMEDIA';
 
       // Visibility Section
       if (currentCategory === 'ALL') {
