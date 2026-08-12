@@ -23,7 +23,8 @@ const gplay = rawGplay.developer ? rawGplay : (rawGplay.default || rawGplay);
 const ROOT = path.join(__dirname, '..');
 const SETTINGS_PATH = path.join(ROOT, 'config', 'settings.json');
 const CACHE_DIR = path.join(ROOT, 'cache');
-const CACHE_PATH = path.join(CACHE_DIR, 'apps.json');
+const CACHE_PATH_EN = path.join(CACHE_DIR, 'apps.json');
+const CACHE_PATH_ID = path.join(CACHE_DIR, 'apps-id.json');
 const SCHEMA_PATH = path.join(CACHE_DIR, 'apps.schema.json');
 const WARNING_PATH = path.join(CACHE_DIR, 'SCHEMA_WARNING.md');
 const LAST_RUN_PATH = path.join(CACHE_DIR, 'last-run.json');
@@ -127,30 +128,30 @@ function formatTitle(title) {
   return title;
 }
 
-async function main() {
-  const settings = loadSettings();
-
+async function fetchForLocale(settings, lang, country) {
   let rawApps = [];
 
   if (Array.isArray(settings.appIds) && settings.appIds.length > 0) {
     console.log(
-      `Fetching ${settings.appIds.length} apps dari daftar appIds di config/settings.json...`
+      `Fetching ${settings.appIds.length} apps [${lang}_${country}] dari daftar appIds...`
     );
     rawApps = await fetchWithRetry(() =>
       Promise.all(
         settings.appIds.map((id) =>
-          gplay.app({ appId: id, lang: 'id', country: 'id' }).catch((err) => {
-            console.warn(`⚠️ Warning: Gagal fetch app ${id}: ${err.message}`);
+          gplay.app({ appId: id, lang, country }).catch((err) => {
+            console.warn(`⚠️ Warning: Gagal fetch app ${id} [${lang}]: ${err.message}`);
             return null;
           })
         )
       ).then((list) => list.filter(Boolean))
     );
   } else {
-    console.log('Fetching developer page untuk devId:', settings.developerId);
+    console.log(`Fetching developer page [${lang}_${country}] untuk devId:`, settings.developerId);
     rawApps = await fetchWithRetry(() =>
       gplay.developer({
         devId: settings.developerId,
+        lang,
+        country,
         num: settings.maxApps || 200,
       })
     );
@@ -174,29 +175,35 @@ async function main() {
 
   const games = mappedApps.filter((a) => a.type === 'GAME');
   const apps = mappedApps.filter((a) => a.type === 'APP');
-  const sortedApps = [...games, ...apps];
+  return [...games, ...apps];
+}
 
-  const check = validateSchema(sortedApps);
+async function main() {
+  const settings = loadSettings();
+
+  const [appsEN, appsID] = await Promise.all([
+    fetchForLocale(settings, 'en', 'us'),
+    fetchForLocale(settings, 'id', 'id'),
+  ]);
+
+  const checkEN = validateSchema(appsEN);
+  const checkID = validateSchema(appsID);
   fs.mkdirSync(CACHE_DIR, { recursive: true });
 
-  if (!check.valid) {
+  if (!checkEN.valid || !checkID.valid) {
     const scraperVersion = getScraperVersion();
+    const reason = !checkEN.valid ? `EN: ${checkEN.reason}` : `ID: ${checkID.reason}`;
     const msg = `## ⚠️ Parse gagal validasi skema (${new Date().toISOString()})
 
 **Versi Scraper:** \`google-play-scraper@${scraperVersion}\`
-**Alasan:** ${check.reason}
+**Alasan:** ${reason}
 
-Cache LAMA (\`cache/apps.json\`) tidak ditimpa — aplikasi tetap memakai data sebelumnya.
+Cache LAMA tidak ditimpa — aplikasi tetap memakai data sebelumnya.
 
 Langkah perbaikan:
-1. Cek struktur data terbaru dari Play Store (lihat contoh mentah di bawah)
+1. Cek struktur data terbaru dari Play Store
 2. Sesuaikan EXPECTED_SCHEMA dan/atau mapping di \`scripts/parse-playstore.js\`
 3. Jalankan ulang workflow secara manual
-
-Contoh item mentah yang gagal divalidasi:
-\`\`\`json
-${JSON.stringify(rawApps[0] || {}, null, 2)}
-\`\`\`
 `;
     fs.writeFileSync(WARNING_PATH, msg);
     console.error(msg);
@@ -204,7 +211,8 @@ ${JSON.stringify(rawApps[0] || {}, null, 2)}
     return;
   }
 
-  fs.writeFileSync(CACHE_PATH, JSON.stringify(sortedApps, null, 2));
+  fs.writeFileSync(CACHE_PATH_EN, JSON.stringify(appsEN, null, 2));
+  fs.writeFileSync(CACHE_PATH_ID, JSON.stringify(appsID, null, 2));
   fs.writeFileSync(SCHEMA_PATH, JSON.stringify(EXPECTED_SCHEMA, null, 2));
   fs.writeFileSync(
     LAST_RUN_PATH,
@@ -214,7 +222,7 @@ ${JSON.stringify(rawApps[0] || {}, null, 2)}
   if (fs.existsSync(WARNING_PATH)) fs.unlinkSync(WARNING_PATH);
 
   console.log(
-    `✅ Berhasil parse ${sortedApps.length} items (${games.length} Games di atas, ${apps.length} Apps di bawah). Cache diupdate.`
+    `✅ Berhasil Dual-Cache parse: ${appsEN.length} Global (EN) -> cache/apps.json, ${appsID.length} Indonesia (ID) -> cache/apps-id.json. Cache diupdate.`
   );
 }
 
