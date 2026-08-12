@@ -58,7 +58,7 @@ import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 const String kRemoteListAppsUrl =
-    'https://raw.githubusercontent.com/86xx/PLAYSTORE-DEV-PAGE/main/list-apps.html';
+    'https://raw.githubusercontent.com/livumedia/PLAYSTORE-DEV-PAGE/main/list-apps.html';
 
 class MoreAppsPage extends StatefulWidget {
   const MoreAppsPage({super.key});
@@ -103,7 +103,7 @@ import android.webkit.WebViewClient
 import androidx.appcompat.app.AppCompatActivity
 
 private const val REMOTE_LIST_APPS_URL =
-    "https://raw.githubusercontent.com/86xx/PLAYSTORE-DEV-PAGE/main/list-apps.html"
+    "https://raw.githubusercontent.com/livumedia/PLAYSTORE-DEV-PAGE/main/list-apps.html"
 
 class MoreAppsActivity : AppCompatActivity() {
 
