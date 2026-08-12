@@ -106,6 +106,27 @@ function getScraperVersion() {
   }
 }
 
+function formatTitle(title) {
+  if (!title) return '';
+  const acronyms = new Set(['TTS', 'AI', 'PDF', 'VPN', 'HD', '4K', '3D', 'UI', 'ID', 'URL']);
+  const isAllCaps = title === title.toUpperCase() && /[A-Z]/.test(title);
+  if (isAllCaps) {
+    return title
+      .split(' ')
+      .map((w) => {
+        const clean = w.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+        if (acronyms.has(clean)) return w.replace(new RegExp(clean, 'i'), clean);
+        return w.replace(/[a-zA-Z0-9]+/g, (m) =>
+          acronyms.has(m.toUpperCase())
+            ? m.toUpperCase()
+            : m.charAt(0).toUpperCase() + m.slice(1).toLowerCase()
+        );
+      })
+      .join(' ');
+  }
+  return title;
+}
+
 async function main() {
   const settings = loadSettings();
 
@@ -143,7 +164,7 @@ async function main() {
 
     return {
       appId: a.appId,
-      title: a.title,
+      title: formatTitle(a.title),
       icon: a.icon,
       summary: a.summary || '',
       url: a.url,
