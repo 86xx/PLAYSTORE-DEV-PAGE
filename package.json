@@ -7,6 +7,6 @@
     "parse": "node scripts/parse-playstore.js"
   },
   "dependencies": {
-    "google-play-scraper": "^9.4.0"
+    "google-play-scraper": "^10.1.3"
   }
 }
