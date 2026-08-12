@@ -381,6 +381,15 @@
     let currentCategory = 'ALL';
 
     async function loadDynamicCache() {
+      // 1. Coba baca dari localStorage dulu (Instant local cache load)
+      try {
+        const storedID = localStorage.getItem('cache_apps_id');
+        const storedEN = localStorage.getItem('cache_apps_en');
+        if (storedID) DATA_ID = JSON.parse(storedID);
+        if (storedEN) DATA_EN = JSON.parse(storedEN);
+      } catch (_) {}
+
+      // 2. Fetch data terbaru secara background dari GitHub
       try {
         const [resID, resEN] = await Promise.all([
           fetch('cache/apps-id.json').catch(() => null),
@@ -388,12 +397,14 @@
         ]);
         if (resID && resID.ok) {
           DATA_ID = await resID.json();
+          try { localStorage.setItem('cache_apps_id', JSON.stringify(DATA_ID)); } catch (_) {}
         }
         if (resEN && resEN.ok) {
           DATA_EN = await resEN.json();
+          try { localStorage.setItem('cache_apps_en', JSON.stringify(DATA_EN)); } catch (_) {}
         }
       } catch (e) {
-        console.warn("Using embedded fallback cache");
+        console.warn("Using local cache fallback");
       }
       
       // Highlight default language switcher button
