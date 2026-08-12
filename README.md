@@ -12,6 +12,19 @@ Official production web view loaded by Flutter & Kotlin clients:
 
 ---
 
+## 🔐 GitHub Secrets Configuration
+
+To protect your credentials and email privacy, configure repository secrets under **Settings > Secrets and variables > Actions**:
+
+1. Click **New repository secret**
+2. Add the following secrets:
+   - `MAIL_USERNAME`: Sender email address (e.g., `sender@example.com`).
+   - `MAIL_PASSWORD`: App Password generated for your Gmail account (requires 2FA enabled).
+   - `NOTIFY_EMAILS` *(optional)*: Target email address(es) for schema failure alerts (separated by commas for multiple emails, e.g., `alert1@example.com,alert2@example.com`).
+3. Click **Add secret**.
+
+---
+
 ## 🚀 Key Features
 
 1. **Near-Zero Client Overhead**: Flutter and Kotlin clients load a single WebView widget. No complex JSON parsing, no heavy list rendering, and zero memory overhead.
@@ -141,6 +154,19 @@ Project parser halaman developer Google Play Store otomatis berbasis GitHub Acti
 Tampilan antarmuka resmi yang di-load oleh client Flutter & Kotlin:
 
 👉 **[https://86xx.github.io/PLAYSTORE-DEV-PAGE/demo_preview.html](https://86xx.github.io/PLAYSTORE-DEV-PAGE/demo_preview.html)**
+
+---
+
+## 🔐 Pengaturan GitHub Secrets
+
+Untuk menjaga kerahasiaan email dan kredensial Anda, tambahkan rahasia di **Settings > Secrets and variables > Actions**:
+
+1. Klik **New repository secret**
+2. Tambahkan secret berikut:
+   - `MAIL_USERNAME`: Alamat email pengirim (contoh: `pengirim@example.com`).
+   - `MAIL_PASSWORD`: App Password akun Gmail pengirim (memerlukan 2FA aktif di akun Google).
+   - `NOTIFY_EMAILS` *(opsional)*: Alamat email tujuan untuk notifikasi jika skema data berubah (pisahkan dengan koma jika lebih dari 1, contoh: `email1@domain.com,email2@domain.com`).
+3. Klik **Add secret**.
 
 ---
 
