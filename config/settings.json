@@ -1,17 +1,13 @@
 {
-  "_comment": "File setting terpusat. JANGAN taruh password di sini - password tetap di GitHub Secrets (MAIL_USERNAME, MAIL_PASSWORD).",
+  "_comment": "File setting terpusat. Email sensitif disimpan di GitHub Secrets (NOTIFY_EMAILS atau MAIL_USERNAME).",
 
   "developerId": "7833833743949360412",
 
-  "notifyEmails": [
-    "bekti.playstore@gmail.com",
-    "bexthy@gmail.com",
-    "livumedia@outlook.com"
-  ],
+  "notifyEmails": [],
 
   "frequencyDays": 7,
 
-  "_frequencyDays_note": "Workflow dicek tiap hari, tapi parse hanya benar-benar jalan kalau sudah lewat 'frequencyDays' hari sejak run terakhir yang sukses. Ubah angka ini kapan pun tanpa perlu edit file workflow (.yml).",
+  "_frequencyDays_note": "Workflow dicek tiap hari, tapi parse hanya benar-benar jalan kalau sudah lewat 'frequencyDays' hari sejak run terakhir yang sukses.",
 
   "maxApps": 200,
 

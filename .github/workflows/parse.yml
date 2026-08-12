@@ -50,11 +50,20 @@ jobs:
             git push
           fi
 
-      - name: Baca daftar email notifikasi dari settings.json
+      - name: Hitung recipient email dari GitHub Secrets atau settings.json
         if: steps.check.outputs.should_run == 'true' && failure()
         id: recipients
+        env:
+          SECRET_NOTIFY: ${{ secrets.NOTIFY_EMAILS }}
+          SECRET_MAIL: ${{ secrets.MAIL_USERNAME }}
         run: |
-          EMAILS=$(node -e "console.log(require('./config/settings.json').notifyEmails.join(','))")
+          EMAILS="$SECRET_NOTIFY"
+          if [ -z "$EMAILS" ]; then
+            EMAILS="$SECRET_MAIL"
+          fi
+          if [ -z "$EMAILS" ]; then
+            EMAILS=$(node -e "console.log((require('./config/settings.json').notifyEmails || []).join(','))")
+          fi
           echo "list=$EMAILS" >> "$GITHUB_OUTPUT"
 
       - name: Kirim email peringatan jika skema berubah
