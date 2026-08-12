@@ -377,8 +377,36 @@
       { appId: "id.wallpaperhd.anime", title: "Anime Wallpapers HD 4K", icon: "https://play-lh.googleusercontent.com/pESDidzGiRbtT-_fsxoqM7BrwU-ZSK6vRSgGAqbS_KEXMHGHq3mS1eFIOgS8FDFAv79vzTBI3Zh8IfwcKsSjwA", summary: "Anime Wallpaper HD is a wallpaper maker for all your favorite Anime & Manga series", url: "https://play.google.com/store/apps/details?id=id.wallpaperhd.anime", type: "APP" }
     ];
 
-    let currentLang = 'id';
+    let currentLang = (navigator.language && navigator.language.startsWith('id')) ? 'id' : 'en';
     let currentCategory = 'ALL';
+
+    async function loadDynamicCache() {
+      try {
+        const [resID, resEN] = await Promise.all([
+          fetch('cache/apps-id.json').catch(() => null),
+          fetch('cache/apps.json').catch(() => null)
+        ]);
+        if (resID && resID.ok) {
+          DATA_ID = await resID.json();
+        }
+        if (resEN && resEN.ok) {
+          DATA_EN = await resEN.json();
+        }
+      } catch (e) {
+        console.warn("Using embedded fallback cache");
+      }
+      
+      // Highlight default language switcher button
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.remove('active');
+        if ((currentLang === 'id' && btn.textContent.includes('ID')) ||
+            (currentLang === 'en' && btn.textContent.includes('EN'))) {
+          btn.classList.add('active');
+        }
+      });
+
+      renderList();
+    }
 
     function renderList() {
       const data = currentLang === 'id' ? DATA_ID : DATA_EN;
@@ -389,16 +417,17 @@
       const subtitleText = document.getElementById('subtitle-text');
       const tabAll = document.getElementById('tab-all');
 
+      const games = data.filter(item => item.type === 'GAME');
+      const apps = data.filter(item => item.type === 'APP');
+      const totalCount = games.length + apps.length;
+
       if (tabAll) {
-        tabAll.textContent = currentLang === 'id' ? 'Semua (16)' : 'All (16)';
+        tabAll.textContent = currentLang === 'id' ? `Semua (${totalCount})` : `All (${totalCount})`;
       }
 
       subtitleText.textContent = currentLang === 'id' 
         ? 'Temukan koleksi game dan aplikasi menarik dari LIVUMEDIA' 
         : 'Explore the collection of exciting games and apps by LIVUMEDIA';
-
-      const games = data.filter(item => item.type === 'GAME');
-      const apps = data.filter(item => item.type === 'APP');
 
       // Visibility Section
       if (currentCategory === 'ALL') {
@@ -455,8 +484,8 @@
       renderList();
     }
 
-    // Initial Render
-    renderList();
+    // Initial Load & Render
+    loadDynamicCache();
   </script>
 </body>
 </html>
