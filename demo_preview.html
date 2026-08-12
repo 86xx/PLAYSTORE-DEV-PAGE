@@ -115,6 +115,12 @@
       border: 1px solid rgba(255, 255, 255, 0.15);
     }
 
+    .lang-container {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 12px;
+    }
+
     .lang-switcher {
       display: flex;
       gap: 4px;
@@ -295,6 +301,12 @@
 
   <div class="container">
     <header>
+      <div class="lang-container">
+        <div class="lang-switcher">
+          <button class="lang-btn active" onclick="switchLanguage('id')">🇮🇩 ID</button>
+          <button class="lang-btn" onclick="switchLanguage('en')">🌐 EN</button>
+        </div>
+      </div>
       <h1>More Games & Apps</h1>
       <p class="subtitle">by LIVUMEDIA</p>
     </header>
@@ -304,11 +316,6 @@
         <button class="tab-btn active" id="tab-all" onclick="filterCategory('ALL')">Semua (16)</button>
         <button class="tab-btn" onclick="filterCategory('GAME')">🎮 Games (11)</button>
         <button class="tab-btn" onclick="filterCategory('APP')">📱 Apps (5)</button>
-      </div>
-
-      <div class="lang-switcher">
-        <button class="lang-btn active" onclick="switchLanguage('id')">🇮🇩 ID</button>
-        <button class="lang-btn" onclick="switchLanguage('en')">🌐 EN</button>
       </div>
     </div>
 
