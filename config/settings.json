@@ -1,12 +1,12 @@
 {
   "_comment": "File setting terpusat. JANGAN taruh password di sini - password tetap di GitHub Secrets (MAIL_USERNAME, MAIL_PASSWORD).",
 
-  "developerId": "GANTI_DENGAN_DEV_ID_PLAY_STORE",
+  "developerId": "7833833743949360412",
 
   "notifyEmails": [
-    "email1@example.com",
-    "email2@example.com",
-    "email3@example.com"
+    "bekti.playstore@gmail.com",
+    "bexthy@gmail.com",
+    "livumedia@outlook.com"
   ],
 
   "frequencyDays": 7,
