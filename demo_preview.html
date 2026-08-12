@@ -301,12 +301,6 @@
 
   <div class="container">
     <header>
-      <div class="lang-container">
-        <div class="lang-switcher">
-          <button class="lang-btn active" onclick="switchLanguage('id')">🇮🇩 ID</button>
-          <button class="lang-btn" onclick="switchLanguage('en')">🌐 EN</button>
-        </div>
-      </div>
       <h1>More Games & Apps</h1>
       <p class="subtitle">by LIVUMEDIA</p>
     </header>
@@ -405,19 +399,6 @@
           DATA_EN = await resEN.json();
           try { localStorage.setItem('cache_apps_en', JSON.stringify(DATA_EN)); } catch (_) {}
         }
-      } catch (e) {
-        console.warn("Using local cache fallback");
-      }
-      
-      // Highlight default language switcher button
-      document.querySelectorAll('.lang-btn').forEach(btn => {
-        btn.classList.remove('active');
-        if ((currentLang === 'id' && btn.textContent.includes('ID')) ||
-            (currentLang === 'en' && btn.textContent.includes('EN'))) {
-          btn.classList.add('active');
-        }
-      });
-
       renderList();
     }
 
