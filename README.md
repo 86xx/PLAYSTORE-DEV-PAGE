@@ -55,7 +55,7 @@ The parser generates two static JSON files under the `cache/` directory:
 > [!IMPORTANT]
 > **Mandatory Rules for Client WebView Implementations (Flutter & Kotlin):**
 > 1. **Multi-Layer Offline Caching**: Always implement a 4-layer caching flow (Local Bundled Asset -> Local Disk File Cache -> Background Async Fetch -> Error Fallback) so the screen loads instantly with 0ms delay and handles offline mode cleanly without showing `net::ERR_INTERNET_DISCONNECTED`.
-> 2. **Top Navigation Bar Title & Close Button**: Always set the native Top Navigation Bar / AppBar title to **`"More Apps"`** (to prevent double-header duplication with the HTML `<h1>`) and include a prominent **Close / Back Button** (`IconButton` with `Icons.arrow_back` / `Icons.close` in Flutter or `setDisplayHomeAsUpEnabled(true)` in Kotlin).
+> 2. **Top Navigation Bar Title & Close Button**: Always set the native Top Navigation Bar / AppBar title strictly to **`"More Apps"`** across ALL locales and languages (to prevent double-header duplication with the HTML `<h1>`) and include a prominent **Close / Back Button** (`IconButton` with `Icons.arrow_back` / `Icons.close` in Flutter or `setDisplayHomeAsUpEnabled(true)` in Kotlin).
 
 ### 1. Flutter (`flutter-script/lib/more_apps_page.dart`)
 ```dart
