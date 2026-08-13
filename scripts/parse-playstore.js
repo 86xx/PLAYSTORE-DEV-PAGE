@@ -186,6 +186,10 @@ function updateHtmlFiles(appsEN, appsID) {
     path.join(ROOT, '..', 'kotlin-script', 'app', 'src', 'main', 'assets', 'list-apps.html')
   ];
 
+  const gamesCount = appsID.filter((a) => a.type === 'GAME').length;
+  const appsCount = appsID.filter((a) => a.type === 'APP').length;
+  const totalCount = appsID.length;
+
   for (const filePath of htmlFiles) {
     if (!fs.existsSync(filePath)) continue;
 
@@ -199,8 +203,22 @@ function updateHtmlFiles(appsEN, appsID) {
     const enRegex = /const\s+DATA_EN\s*=\s*\[[\s\S]*?\];/;
     content = content.replace(enRegex, `const DATA_EN = ${JSON.stringify(appsEN, null, 2)};`);
 
+    // Replace Tab buttons in HTML
+    content = content.replace(
+      /<button class="tab-btn active" id="tab-all"[^>]*>.*?<\/button>/s,
+      `<button class="tab-btn active" id="tab-all" onclick="filterCategory('ALL')">Semua (${totalCount})</button>`
+    );
+    content = content.replace(
+      /<button class="tab-btn"[^>]*id="tab-games"[^>]*>.*?<\/button>/s,
+      `<button class="tab-btn" id="tab-games" onclick="filterCategory('GAME')">🎮 Games (${gamesCount})</button>`
+    );
+    content = content.replace(
+      /<button class="tab-btn"[^>]*id="tab-apps"[^>]*>.*?<\/button>/s,
+      `<button class="tab-btn" id="tab-apps" onclick="filterCategory('APP')">📱 Apps (${appsCount})</button>`
+    );
+
     fs.writeFileSync(filePath, content, 'utf8');
-    console.log(`✅ Automatically updated ${appsID.length} apps into ${path.basename(filePath)}`);
+    console.log(`✅ Automatically updated ${totalCount} apps (${gamesCount} Games, ${appsCount} Apps) into ${path.basename(filePath)}`);
   }
 }
 
