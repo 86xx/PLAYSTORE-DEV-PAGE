@@ -1,5 +1,5 @@
 {
-  "_comment": "File setting terpusat. Email sensitif disimpan di GitHub Secrets (NOTIFY_EMAILS atau MAIL_USERNAME).",
+  "_comment": "Centralized settings file. Sensitive emails are stored in GitHub Secrets (NOTIFY_EMAILS or MAIL_USERNAME).",
 
   "developerId": "7833833743949360412",
 
@@ -7,7 +7,7 @@
 
   "frequencyDays": 7,
 
-  "_frequencyDays_note": "Workflow dicek tiap hari, tapi parse hanya benar-benar jalan kalau sudah lewat 'frequencyDays' hari sejak run terakhir yang sukses.",
+  "_frequencyDays_note": "Workflow runs daily, but parsing only executes if 'frequencyDays' days have passed since the last successful run.",
 
   "maxApps": 200,
 

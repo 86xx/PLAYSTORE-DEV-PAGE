@@ -1,14 +1,13 @@
 /**
- * Cek apakah sudah waktunya parse berdasarkan `frequencyDays` di
- * config/settings.json, dibandingkan dengan waktu run sukses terakhir
- * yang tersimpan di cache/last-run.json.
+ * Check if it is time to parse based on `frequencyDays` in
+ * config/settings.json, compared against the last successful run timestamp
+ * stored in cache/last-run.json.
  *
- * Kalau trigger-nya manual (workflow_dispatch), SELALU dianggap due
- * (skip pengecekan frekuensi) - karena manual run = kamu memang mau
- * parse sekarang.
+ * If triggered manually (workflow_dispatch), ALWAYS consider due
+ * (skip frequency check) - because manual run = user explicitly requested now.
  *
- * Output: menulis `should_run=true/false` ke GITHUB_OUTPUT supaya
- * step selanjutnya di workflow bisa pakai `if:` condition.
+ * Output: writes `should_run=true/false` to GITHUB_OUTPUT for
+ * subsequent workflow steps to use in `if:` conditions.
  */
 
 const fs = require('fs');
@@ -21,7 +20,7 @@ function main() {
   const isManual = process.env.GITHUB_EVENT_NAME === 'workflow_dispatch';
 
   if (isManual) {
-    console.log('Trigger manual - langsung jalan, skip cek frekuensi.');
+    console.log('Manual trigger - running immediately, skipping frequency check.');
     writeOutput(true);
     return;
   }
@@ -30,7 +29,7 @@ function main() {
   const frequencyDays = settings.frequencyDays ?? 7;
 
   if (!fs.existsSync(LAST_RUN_PATH)) {
-    console.log('Belum pernah ada run sukses sebelumnya - jalan sekarang.');
+    console.log('No previous successful run recorded - running now.');
     writeOutput(true);
     return;
   }
@@ -41,12 +40,12 @@ function main() {
 
   if (daysSince >= frequencyDays) {
     console.log(
-      `Sudah ${daysSince.toFixed(1)} hari sejak run terakhir (>= ${frequencyDays} hari) - jalan sekarang.`
+      `${daysSince.toFixed(1)} days since last run (>= ${frequencyDays} days) - running now.`
     );
     writeOutput(true);
   } else {
     console.log(
-      `Baru ${daysSince.toFixed(1)} hari sejak run terakhir (< ${frequencyDays} hari) - skip.`
+      `Only ${daysSince.toFixed(1)} days since last run (< ${frequencyDays} days) - skipping.`
     );
     writeOutput(false);
   }

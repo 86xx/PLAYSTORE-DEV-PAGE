@@ -1,18 +1,17 @@
 /**
- * Parse halaman developer Play Store -> cache JSON untuk ditampilkan
- * di dalam app/game (Flutter atau Kotlin).
+ * Parse Play Store developer page -> JSON cache to display inside
+ * client apps/games (Flutter or Kotlin).
  *
- * Setting terpusat ada di config/settings.json (developerId, notifyEmails,
- * frequencyDays, maxApps). Kredensial email (MAIL_USERNAME/MAIL_PASSWORD)
- * TETAP di GitHub Secrets, tidak pernah ditaruh di settings.json.
+ * Centralized settings are in config/settings.json (developerId, notifyEmails,
+ * frequencyDays, maxApps). Email credentials (MAIL_USERNAME/MAIL_PASSWORD)
+ * REMAIN in GitHub Secrets and are never stored in settings.json.
  *
- * Perilaku penting:
- *   - Cache LAMA (cache/apps.json) hanya ditimpa kalau hasil parse baru
- *     lolos validasi skema (field & tipe data sama seperti sebelumnya).
- *   - Kalau skema berubah (Google mengubah struktur halaman), cache lama
- *     TIDAK disentuh, dan file cache/SCHEMA_WARNING.md dibuat berisi
- *     detail apa yang berubah supaya EXPECTED_SCHEMA / parser bisa
- *     diperbaiki. Workflow akan mengirim email ke notifyEmails.
+ * Key behavior:
+ *   - OLD Cache (cache/apps.json) is only overwritten if the new parse result
+ *     passes schema validation (fields & data types match expectation).
+ *   - If the schema changes (Google updates page structure), old cache is
+ *     UNTOUCHED, and cache/SCHEMA_WARNING.md is created with details
+ *     so EXPECTED_SCHEMA / parser can be fixed. Workflow sends email to notifyEmails.
  */
 
 const fs = require('fs');
@@ -40,12 +39,12 @@ const EXPECTED_SCHEMA = {
 
 function loadSettings() {
   if (!fs.existsSync(SETTINGS_PATH)) {
-    throw new Error('config/settings.json tidak ditemukan.');
+    throw new Error('config/settings.json not found.');
   }
   const settings = JSON.parse(fs.readFileSync(SETTINGS_PATH, 'utf8'));
-  if (!settings.developerId || settings.developerId.startsWith('GANTI_')) {
+  if (!settings.developerId || settings.developerId.startsWith('CHANGE_')) {
     throw new Error(
-      'developerId belum diisi di config/settings.json. Isi dengan ID numerik developer Play Store kamu.'
+      'developerId not set in config/settings.json. Fill with your numeric Play Store developer ID.'
     );
   }
   return settings;
@@ -53,7 +52,7 @@ function loadSettings() {
 
 function validateSchema(items) {
   if (!Array.isArray(items) || items.length === 0) {
-    return { valid: false, reason: 'Hasil parse kosong atau bukan array.' };
+    return { valid: false, reason: 'Parse result is empty or not an array.' };
   }
 
   for (let i = 0; i < items.length; i++) {
@@ -66,7 +65,7 @@ function validateSchema(items) {
         missing.push(key);
       } else if (typeof item[key] !== expectedType) {
         wrongType.push(
-          `${key} (dapat: ${typeof item[key]}, harusnya: ${expectedType})`
+          `${key} (got: ${typeof item[key]}, expected: ${expectedType})`
         );
       }
     }
@@ -75,8 +74,8 @@ function validateSchema(items) {
       return {
         valid: false,
         reason: `Item [index ${i}] -> ` + [
-          missing.length ? `Field hilang: ${missing.join(', ')}` : null,
-          wrongType.length ? `Tipe data salah: ${wrongType.join(', ')}` : null,
+          missing.length ? `Missing fields: ${missing.join(', ')}` : null,
+          wrongType.length ? `Incorrect types: ${wrongType.join(', ')}` : null,
         ]
           .filter(Boolean)
           .join(' | '),
@@ -92,7 +91,7 @@ async function fetchWithRetry(fn, retries = 3, delayMs = 2000) {
     try {
       return await fn();
     } catch (err) {
-      console.warn(`⚠️ Percobaan ${attempt}/${retries} gagal: ${err.message}`);
+      console.warn(`⚠️ Attempt ${attempt}/${retries} failed: ${err.message}`);
       if (attempt === retries) throw err;
       await new Promise((res) => setTimeout(res, delayMs * attempt));
     }
@@ -133,20 +132,20 @@ async function fetchForLocale(settings, lang, country) {
 
   if (Array.isArray(settings.appIds) && settings.appIds.length > 0) {
     console.log(
-      `Fetching ${settings.appIds.length} apps [${lang}_${country}] dari daftar appIds...`
+      `Fetching ${settings.appIds.length} apps [${lang}_${country}] from appIds list...`
     );
     rawApps = await fetchWithRetry(() =>
       Promise.all(
         settings.appIds.map((id) =>
           gplay.app({ appId: id, lang, country }).catch((err) => {
-            console.warn(`⚠️ Warning: Gagal fetch app ${id} [${lang}]: ${err.message}`);
+            console.warn(`⚠️ Warning: Failed to fetch app ${id} [${lang}]: ${err.message}`);
             return null;
           })
         )
       ).then((list) => list.filter(Boolean))
     );
   } else {
-    console.log(`Fetching developer page [${lang}_${country}] untuk devId:`, settings.developerId);
+    console.log(`Fetching developer page [${lang}_${country}] for devId:`, settings.developerId);
     rawApps = await fetchWithRetry(() =>
       gplay.developer({
         devId: settings.developerId,
@@ -193,17 +192,17 @@ async function main() {
   if (!checkEN.valid || !checkID.valid) {
     const scraperVersion = getScraperVersion();
     const reason = !checkEN.valid ? `EN: ${checkEN.reason}` : `ID: ${checkID.reason}`;
-    const msg = `## ⚠️ Parse gagal validasi skema (${new Date().toISOString()})
+    const msg = `## ⚠️ Parse schema validation failed (${new Date().toISOString()})
 
-**Versi Scraper:** \`google-play-scraper@${scraperVersion}\`
-**Alasan:** ${reason}
+**Scraper Version:** \`google-play-scraper@${scraperVersion}\`
+**Reason:** ${reason}
 
-Cache LAMA tidak ditimpa — aplikasi tetap memakai data sebelumnya.
+OLD cache was not overwritten — apps continue using previous cached data.
 
-Langkah perbaikan:
-1. Cek struktur data terbaru dari Play Store
-2. Sesuaikan EXPECTED_SCHEMA dan/atau mapping di \`scripts/parse-playstore.js\`
-3. Jalankan ulang workflow secara manual
+Recovery steps:
+1. Inspect updated Play Store data structure
+2. Adjust EXPECTED_SCHEMA and/or mapping in \`scripts/parse-playstore.js\`
+3. Re-run workflow manually
 `;
     fs.writeFileSync(WARNING_PATH, msg);
     console.error(msg);
@@ -222,7 +221,7 @@ Langkah perbaikan:
   if (fs.existsSync(WARNING_PATH)) fs.unlinkSync(WARNING_PATH);
 
   console.log(
-    `✅ Berhasil Dual-Cache parse: ${appsEN.length} Global (EN) -> cache/apps.json, ${appsID.length} Indonesia (ID) -> cache/apps-id.json. Cache diupdate.`
+    `✅ Successfully parsed Dual-Cache: ${appsEN.length} Global (EN) -> cache/apps.json, ${appsID.length} Indonesia (ID) -> cache/apps-id.json. Cache updated.`
   );
 }
 
@@ -230,9 +229,8 @@ main().catch((err) => {
   console.error('❌ Parse error:', err.message);
   try {
     fs.mkdirSync(CACHE_DIR, { recursive: true });
-    const msg = `## ⚠️ Parse gagal - Unexpected Error (${new Date().toISOString()})\n\n**Error:** ${err.message}\n`;
+    const msg = `## ⚠️ Parse failed - Unexpected Error (${new Date().toISOString()})\n\n**Error:** ${err.message}\n`;
     fs.writeFileSync(WARNING_PATH, msg);
   } catch (_) {}
   process.exitCode = 1;
 });
-
