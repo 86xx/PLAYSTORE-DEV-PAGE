@@ -56,8 +56,24 @@
     "type": "GAME"
   },
   {
+    "appId": "id.livumedia.screwjam",
+    "title": "Screw Jam Puzzle: Nuts & Bolts",
+    "icon": "https://play-lh.googleusercontent.com/xsA1DtzXORCjfNj-c40Dcjc2E7j4sLHv3uUqUZ4C43O2WpIfE352SHnydjewmAnKqv46JulY5Bos0KVp4s8uIQ",
+    "summary": "Lepaskan baut, jatuhkan papan, dan pecahkan teka-teki fisika yang rumit! Mur dan baut macet.",
+    "url": "https://play.google.com/store/apps/details?id=id.livumedia.screwjam&hl=id&gl=id",
+    "type": "GAME"
+  },
+  {
+    "appId": "id.livumedia.rollingball",
+    "title": "Rolling Ball: Pipe Puzzle",
+    "icon": "https://play-lh.googleusercontent.com/CqjiZRBODq5Wsx_aVwXqGzZcafivQ1XT2R-jM06LvzH8BEBqQx0AOnrNWjOnEGs8RxGB71GmgUOPwi7nExWfaw",
+    "summary": "Selesaikan teka-teki pipa! Geser balok, gulirkan bola ke gawang, dan kumpulkan bintang.",
+    "url": "https://play.google.com/store/apps/details?id=id.livumedia.rollingball&hl=id&gl=id",
+    "type": "GAME"
+  },
+  {
     "appId": "com.axlhostdev.tankbubbleshooter",
-    "title": "Tank Bubble Shooter Game",
+    "title": "Bubble Shooter: Pop Puzzle",
     "icon": "https://play-lh.googleusercontent.com/qZ_bIfXEKKUAd8Bwn6LlxBH_VYHykbrO4thkA_7e-pKZXlsjIPJlVO9saInie9AA_uCsbJzwL-QY0jLlYVPBUQ",
     "summary": "Game gelembung paling seru! Cocokkan warna, pecahkan gelembung &amp; latih otak!",
     "url": "https://play.google.com/store/apps/details?id=com.axlhostdev.tankbubbleshooter&hl=id&gl=id",
