@@ -1,6 +1,6 @@
 /**
- * Parse Play Store developer page -> JSON cache to display inside
- * client apps/games (Flutter or Kotlin).
+ * Parse Play Store developer page -> JSON cache & update HTML files to display inside
+ * client apps/games (Flutter or Kotlin) and web view.
  *
  * Centralized settings are in config/settings.json (developerId, notifyEmails,
  * frequencyDays, maxApps). Email credentials (MAIL_USERNAME/MAIL_PASSWORD)
@@ -9,9 +9,8 @@
  * Key behavior:
  *   - OLD Cache (cache/apps.json) is only overwritten if the new parse result
  *     passes schema validation (fields & data types match expectation).
- *   - If the schema changes (Google updates page structure), old cache is
- *     UNTOUCHED, and cache/SCHEMA_WARNING.md is created with details
- *     so EXPECTED_SCHEMA / parser can be fixed. Workflow sends email to notifyEmails.
+ *   - Automatically updates fallback embedded DATA_ID & DATA_EN inside list-apps.html
+ *     and demo_preview.html so HTML files ALWAYS contain latest app count automatically!
  */
 
 const fs = require('fs');
@@ -160,7 +159,7 @@ async function fetchForLocale(settings, lang, country) {
     const isGame =
       (a.genreId && a.genreId.startsWith('GAME_')) ||
       (a.genre && a.genre.toLowerCase().includes('game')) ||
-      (a.appId && (a.appId.includes('game') || a.appId.includes('puzzle') || a.appId.includes('match') || a.appId.includes('blast') || a.appId.includes('shooter') || a.appId.includes('ludo') || a.appId.includes('silat')));
+      (a.appId && (a.appId.includes('game') || a.appId.includes('puzzle') || a.appId.includes('match') || a.appId.includes('blast') || a.appId.includes('shooter') || a.appId.includes('ludo') || a.appId.includes('silat') || a.appId.includes('screw') || a.appId.includes('ball')));
 
     return {
       appId: a.appId,
@@ -175,6 +174,34 @@ async function fetchForLocale(settings, lang, country) {
   const games = mappedApps.filter((a) => a.type === 'GAME');
   const apps = mappedApps.filter((a) => a.type === 'APP');
   return [...games, ...apps];
+}
+
+function updateHtmlFiles(appsEN, appsID) {
+  const htmlFiles = [
+    path.join(ROOT, 'list-apps.html'),
+    path.join(ROOT, 'demo_preview.html'),
+    path.join(ROOT, '..', 'list-apps.html'),
+    path.join(ROOT, '..', 'demo_preview.html'),
+    path.join(ROOT, '..', 'flutter-script', 'assets', 'list-apps.html'),
+    path.join(ROOT, '..', 'kotlin-script', 'app', 'src', 'main', 'assets', 'list-apps.html')
+  ];
+
+  for (const filePath of htmlFiles) {
+    if (!fs.existsSync(filePath)) continue;
+
+    let content = fs.readFileSync(filePath, 'utf8');
+
+    // Replace DATA_ID
+    const idRegex = /const\s+DATA_ID\s*=\s*\[[\s\S]*?\];/;
+    content = content.replace(idRegex, `const DATA_ID = ${JSON.stringify(appsID, null, 2)};`);
+
+    // Replace DATA_EN
+    const enRegex = /const\s+DATA_EN\s*=\s*\[[\s\S]*?\];/;
+    content = content.replace(enRegex, `const DATA_EN = ${JSON.stringify(appsEN, null, 2)};`);
+
+    fs.writeFileSync(filePath, content, 'utf8');
+    console.log(`✅ Automatically updated ${appsID.length} apps into ${path.basename(filePath)}`);
+  }
 }
 
 async function main() {
@@ -210,6 +237,7 @@ Recovery steps:
     return;
   }
 
+  // 1. Save JSON cache files
   fs.writeFileSync(CACHE_PATH_EN, JSON.stringify(appsEN, null, 2));
   fs.writeFileSync(CACHE_PATH_ID, JSON.stringify(appsID, null, 2));
   fs.writeFileSync(SCHEMA_PATH, JSON.stringify(EXPECTED_SCHEMA, null, 2));
@@ -218,10 +246,13 @@ Recovery steps:
     JSON.stringify({ timestamp: new Date().toISOString() }, null, 2)
   );
 
+  // 2. Automatically update list-apps.html and demo_preview.html with newly fetched app list
+  updateHtmlFiles(appsEN, appsID);
+
   if (fs.existsSync(WARNING_PATH)) fs.unlinkSync(WARNING_PATH);
 
   console.log(
-    `✅ Successfully parsed Dual-Cache: ${appsEN.length} Global (EN) -> cache/apps.json, ${appsID.length} Indonesia (ID) -> cache/apps-id.json. Cache updated.`
+    `✅ Successfully parsed Dual-Cache & updated HTML: ${appsEN.length} Global (EN) -> cache/apps.json, ${appsID.length} Indonesia (ID) -> cache/apps-id.json. Cache & HTML updated.`
   );
 }
 
