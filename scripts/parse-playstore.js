@@ -179,9 +179,7 @@ async function fetchForLocale(settings, lang, country) {
 function updateHtmlFiles(appsEN, appsID) {
   const htmlFiles = [
     path.join(ROOT, 'list-apps.html'),
-    path.join(ROOT, 'demo_preview.html'),
     path.join(ROOT, '..', 'list-apps.html'),
-    path.join(ROOT, '..', 'demo_preview.html'),
     path.join(ROOT, '..', 'flutter-script', 'assets', 'list-apps.html'),
     path.join(ROOT, '..', 'kotlin-script', 'app', 'src', 'main', 'assets', 'list-apps.html')
   ];
