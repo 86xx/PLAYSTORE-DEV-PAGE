@@ -206,15 +206,15 @@ function updateHtmlFiles(appsEN, appsID) {
     // Replace Tab buttons in HTML
     content = content.replace(
       /<button class="tab-btn active" id="tab-all"[^>]*>.*?<\/button>/s,
-      `<button class="tab-btn active" id="tab-all" onclick="filterCategory('ALL')">Semua (${totalCount})</button>`
+      `<button class="tab-btn active" id="tab-all" onclick="filterCategory('ALL', event)">Semua (${totalCount})</button>`
     );
     content = content.replace(
       /<button class="tab-btn"[^>]*id="tab-games"[^>]*>.*?<\/button>/s,
-      `<button class="tab-btn" id="tab-games" onclick="filterCategory('GAME')">🎮 Games (${gamesCount})</button>`
+      `<button class="tab-btn" id="tab-games" onclick="filterCategory('GAME', event)">🎮 Games (${gamesCount})</button>`
     );
     content = content.replace(
       /<button class="tab-btn"[^>]*id="tab-apps"[^>]*>.*?<\/button>/s,
-      `<button class="tab-btn" id="tab-apps" onclick="filterCategory('APP')">📱 Apps (${appsCount})</button>`
+      `<button class="tab-btn" id="tab-apps" onclick="filterCategory('APP', event)">📱 Apps (${appsCount})</button>`
     );
 
     fs.writeFileSync(filePath, content, 'utf8');
