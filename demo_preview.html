@@ -136,7 +136,7 @@
 
     .tab-btn {
       background: transparent;
-      border: none;
+      border: 1px solid transparent;
       color: var(--text-muted);
       padding: 8px 16px;
       border-radius: 10px;
@@ -144,13 +144,21 @@
       font-size: 0.9rem;
       font-weight: 600;
       cursor: pointer;
-      transition: all 0.2s ease;
+      box-sizing: border-box;
+      transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.15s ease;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .tab-btn:active {
+      transform: scale(0.96);
     }
 
     .tab-btn.active {
-      background: rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.12);
       color: var(--text-main);
-      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-color: rgba(255, 255, 255, 0.2);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
     }
 
     .lang-container {
@@ -365,8 +373,8 @@
     <div class="controls-bar">
       <div class="tabs">
         <button class="tab-btn active" id="tab-all" onclick="filterCategory('ALL', event)">Semua (18)</button>
-        <button class="tab-btn" onclick="filterCategory('GAME')">🎮 Games (11)</button>
-        <button class="tab-btn" onclick="filterCategory('APP')">📱 Apps (5)</button>
+        <button class="tab-btn" id="tab-games" onclick="filterCategory('GAME', event)">🎮 Games (13)</button>
+        <button class="tab-btn" id="tab-apps" onclick="filterCategory('APP', event)">📱 Apps (5)</button>
       </div>
     </div>
 
@@ -690,19 +698,28 @@
     let currentCategory = 'ALL';
 
     async function loadDynamicCache() {
-      // 1. Coba baca dari localStorage dulu (Instant local cache load)
+      // 1. Baca dari localStorage hanya jika datanya setara atau lebih baru dari data bawaan HTML
       try {
         const storedID = localStorage.getItem('cache_apps_id');
         const storedEN = localStorage.getItem('cache_apps_en');
-        if (storedID) DATA_ID = JSON.parse(storedID);
-        if (storedEN) DATA_EN = JSON.parse(storedEN);
+        if (storedID) {
+          const parsed = JSON.parse(storedID);
+          if (Array.isArray(parsed) && parsed.length >= DATA_ID.length) DATA_ID = parsed;
+        }
+        if (storedEN) {
+          const parsed = JSON.parse(storedEN);
+          if (Array.isArray(parsed) && parsed.length >= DATA_EN.length) DATA_EN = parsed;
+        }
       } catch (_) {}
 
-      // 2. Fetch data terbaru secara background dari GitHub
+      renderList();
+
+      // 2. Fetch data terbaru secara background dengan cache-busting dari GitHub
       try {
+        const timestamp = Date.now();
         const [resID, resEN] = await Promise.all([
-          fetch('cache/apps-id.json').catch(() => null),
-          fetch('cache/apps.json').catch(() => null)
+          fetch(`cache/apps-id.json?v=${timestamp}`, { cache: 'no-cache' }).catch(() => null),
+          fetch(`cache/apps.json?v=${timestamp}`, { cache: 'no-cache' }).catch(() => null)
         ]);
         if (resID && resID.ok) {
           DATA_ID = await resID.json();
@@ -726,6 +743,8 @@
       const secGames = document.getElementById('section-games');
       const secApps = document.getElementById('section-apps');
       const tabAll = document.getElementById('tab-all');
+      const tabGames = document.getElementById('tab-games');
+      const tabApps = document.getElementById('tab-apps');
 
       const games = data.filter(item => item.type === 'GAME');
       const apps = data.filter(item => item.type === 'APP');
@@ -733,6 +752,12 @@
 
       if (tabAll) {
         tabAll.textContent = currentLang === 'id' ? `Semua (${totalCount})` : `All (${totalCount})`;
+      }
+      if (tabGames) {
+        tabGames.textContent = `🎮 Games (${games.length})`;
+      }
+      if (tabApps) {
+        tabApps.textContent = `📱 Apps (${apps.length})`;
       }
 
       // Visibility Section
@@ -776,10 +801,11 @@
       window.open(url, '_blank');
     }
 
-    function filterCategory(cat) {
+    function filterCategory(cat, evt) {
       currentCategory = cat;
       document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-      event.target.classList.add('active');
+      const activeBtn = (evt && evt.currentTarget) ? evt.currentTarget : (cat === 'ALL' ? document.getElementById('tab-all') : cat === 'GAME' ? document.getElementById('tab-games') : document.getElementById('tab-apps'));
+      if (activeBtn) activeBtn.classList.add('active');
       renderList();
     }
 
