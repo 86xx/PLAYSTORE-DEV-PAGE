@@ -682,47 +682,6 @@
     "icon": "https://play-lh.googleusercontent.com/pESDidzGiRbtT-_fsxoqM7BrwU-ZSK6vRSgGAqbS_KEXMHGHq3mS1eFIOgS8FDFAv79vzTBI3Zh8IfwcKsSjwA",
     "summary": "Anime Wallpapers HD is a wallpaper maker app from any Anime &amp; Manga series.",
     "url": "https://play.google.com/store/apps/details?id=id.wallpaperhd.anime&hl=en&gl=us",
-    "type": "APP"
-  }
-];
-
-    let currentLang = (navigator.language && navigator.language.startsWith('id')) ? 'id' : 'en';
-    let currentCategory = 'ALL';
-
-    async function loadDynamicCache() {
-      // 1. Coba baca dari localStorage dulu (Instant local cache load)
-      try {
-        const storedID = localStorage.getItem('cache_apps_id');
-        const storedEN = localStorage.getItem('cache_apps_en');
-        if (storedID) DATA_ID = JSON.parse(storedID);
-        if (storedEN) DATA_EN = JSON.parse(storedEN);
-      } catch (_) {}
-
-      // 2. Fetch data terbaru secara background dari GitHub
-      try {
-        const [resID, resEN] = await Promise.all([
-          fetch('cache/apps-id.json').catch(() => null),
-          fetch('cache/apps.json').catch(() => null)
-        ]);
-        if (resID && resID.ok) {
-          DATA_ID = await resID.json();
-          try { localStorage.setItem('cache_apps_id', JSON.stringify(DATA_ID)); } catch (_) {}
-        }
-        if (resEN && resEN.ok) {
-          DATA_EN = await resEN.json();
-          try { localStorage.setItem('cache_apps_en', JSON.stringify(DATA_EN)); } catch (_) {}
-        }
-      } catch (e) {
-        console.warn("Using local cache fallback");
-      }
-
-      renderList();
-    }
-
-    function renderList() {
-      const data = currentLang === 'id' ? DATA_ID : DATA_EN;
-      const gridGames = document.getElementById('grid-games');
-      const gridApps = document.getElementById('grid-apps');
       const secGames = document.getElementById('section-games');
       const secApps = document.getElementById('section-apps');
       const tabAll = document.getElementById('tab-all');
