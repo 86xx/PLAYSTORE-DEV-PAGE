@@ -47,6 +47,26 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
+      /* Default Light Mode Theme */
+      --bg-dark: #f8fafc;
+      --bg-card: #ffffff;
+      --bg-card-hover: #ffffff;
+      --border-card: rgba(203, 213, 225, 0.8);
+      --accent-game: linear-gradient(135deg, #6366f1, #8b5cf6);
+      --accent-app: linear-gradient(135deg, #10b981, #06b6d4);
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --title-gradient: linear-gradient(135deg, #0f172a 0%, #334155 100%);
+      --controls-bg: rgba(241, 245, 249, 0.85);
+      --tab-active-bg: #ffffff;
+      --tab-active-border: rgba(203, 213, 225, 0.8);
+      --btn-install-bg: rgba(99, 102, 241, 0.08);
+      --btn-install-text: #4f46e5;
+      --shadow-glow: 0 10px 25px -5px rgba(99, 102, 241, 0.2);
+    }
+
+    [data-theme="dark"] {
+      /* Dark Mode Theme */
       --bg-dark: #0f172a;
       --bg-card: rgba(30, 41, 59, 0.7);
       --bg-card-hover: rgba(51, 65, 85, 0.8);
@@ -55,6 +75,12 @@
       --accent-app: linear-gradient(135deg, #10b981, #06b6d4);
       --text-main: #f8fafc;
       --text-muted: #94a3b8;
+      --title-gradient: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
+      --controls-bg: rgba(15, 23, 42, 0.6);
+      --tab-active-bg: rgba(255, 255, 255, 0.12);
+      --tab-active-border: rgba(255, 255, 255, 0.2);
+      --btn-install-bg: rgba(255, 255, 255, 0.06);
+      --btn-install-text: #f8fafc;
       --shadow-glow: 0 10px 30px -10px rgba(99, 102, 241, 0.3);
     }
 
@@ -68,11 +94,12 @@
       font-family: 'Inter', sans-serif;
       background-color: var(--bg-dark);
       background-image: 
-        radial-gradient(circle at 15% 15%, rgba(99, 102, 241, 0.15) 0%, transparent 40%),
-        radial-gradient(circle at 85% 85%, rgba(16, 185, 129, 0.12) 0%, transparent 40%);
+        radial-gradient(circle at 15% 15%, rgba(99, 102, 241, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 85% 85%, rgba(16, 185, 129, 0.08) 0%, transparent 40%);
       color: var(--text-main);
       min-height: 100vh;
       padding: 24px 16px 48px;
+      transition: background-color 0.3s ease, color 0.3s ease;
     }
 
     .container {
@@ -82,8 +109,8 @@
 
     header {
       text-align: center;
-      margin-bottom: 32px;
-      padding: 20px 0;
+      margin-bottom: 28px;
+      padding: 16px 0;
     }
 
     .dev-badge {
@@ -104,10 +131,77 @@
       font-size: 26px;
       font-weight: 800;
       letter-spacing: -0.02em;
-      background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
+      background: var(--title-gradient);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       margin-bottom: 8px;
+    }
+
+    /* Light/Dark Slide Switcher */
+    .theme-switch-container {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 8px;
+      padding: 6px 14px;
+      border-radius: 24px;
+      background: var(--controls-bg);
+      border: 1px solid var(--border-card);
+      backdrop-filter: blur(12px);
+      transition: background-color 0.3s ease, border-color 0.3s ease;
+    }
+
+    .theme-icon {
+      font-size: 1.1rem;
+      line-height: 1;
+      user-select: none;
+    }
+
+    .theme-switch {
+      position: relative;
+      display: inline-block;
+      width: 44px;
+      height: 24px;
+    }
+
+    .theme-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #cbd5e1;
+      transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      border-radius: 24px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: #ffffff;
+      transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      border-radius: 50%;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    input:checked + .slider {
+      background-color: #6366f1;
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(20px);
     }
 
     p.subtitle {
@@ -123,10 +217,11 @@
       gap: 12px;
       margin-bottom: 24px;
       padding: 8px;
-      background: rgba(15, 23, 42, 0.6);
+      background: var(--controls-bg);
       backdrop-filter: blur(12px);
       border-radius: 16px;
       border: 1px solid var(--border-card);
+      transition: background-color 0.3s ease, border-color 0.3s ease;
     }
 
     .tabs {
@@ -155,10 +250,10 @@
     }
 
     .tab-btn.active {
-      background: rgba(255, 255, 255, 0.12);
+      background: var(--tab-active-bg);
       color: var(--text-main);
-      border-color: rgba(255, 255, 255, 0.2);
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+      border-color: var(--tab-active-border);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     }
 
     .lang-container {
@@ -311,8 +406,8 @@
       padding: 10px;
       border: none;
       border-radius: 12px;
-      background: rgba(255, 255, 255, 0.06);
-      color: var(--text-main);
+      background: var(--btn-install-bg);
+      color: var(--btn-install-text);
       font-family: inherit;
       font-size: 0.85rem;
       font-weight: 600;
@@ -368,6 +463,14 @@
   <div class="container">
     <header>
       <h1>Games & Apps by Livumedia</h1>
+      <div class="theme-switch-container">
+        <span class="theme-icon sun">☀️</span>
+        <label class="theme-switch" for="theme-toggle" aria-label="Toggle light/dark theme">
+          <input type="checkbox" id="theme-toggle" onchange="toggleTheme(this.checked)">
+          <span class="slider"></span>
+        </label>
+        <span class="theme-icon moon">🌒</span>
+      </div>
     </header>
 
     <div class="controls-bar">
@@ -381,7 +484,7 @@
     <!-- Section Games -->
     <div id="section-games">
       <div class="section-title">
-        <span>🎮 Games</span>
+        <span>Games</span>
       </div>
       <div class="grid" id="grid-games"></div>
     </div>
@@ -389,7 +492,7 @@
     <!-- Section Apps -->
     <div id="section-apps" style="margin-top: 32px;">
       <div class="section-title">
-        <span>📱 Apps</span>
+        <span>Apps</span>
       </div>
       <div class="grid" id="grid-apps"></div>
     </div>
@@ -816,7 +919,28 @@
       renderList();
     }
 
+    function toggleTheme(isDark) {
+      const theme = isDark ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', theme);
+      try {
+        localStorage.setItem('user_theme', theme);
+      } catch (_) {}
+    }
+
+    function initTheme() {
+      try {
+        const savedTheme = localStorage.getItem('user_theme') || 'light';
+        const isDark = savedTheme === 'dark';
+        document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+        const toggleInput = document.getElementById('theme-toggle');
+        if (toggleInput) {
+          toggleInput.checked = isDark;
+        }
+      } catch (_) {}
+    }
+
     // Initial Load & Render
+    initTheme();
     loadDynamicCache();
   </script>
 </body>
