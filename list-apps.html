@@ -288,11 +288,8 @@
     }
 
     .section-block {
-      margin-top: 16px;
-    }
-
-    .section-block + .section-block {
-      margin-top: 36px;
+      margin-top: 24px;
+      transition: margin-top 0.2s ease;
     }
 
     .section-title {
@@ -872,16 +869,20 @@
         tabApps.textContent = `📱 Apps (${apps.length})`;
       }
 
-      // Visibility Section
+      // Visibility Section & Dynamic Spacing
       if (currentCategory === 'ALL') {
         secGames.style.display = 'block';
         secApps.style.display = 'block';
+        secGames.style.marginTop = '24px';
+        secApps.style.marginTop = '36px';
       } else if (currentCategory === 'GAME') {
         secGames.style.display = 'block';
         secApps.style.display = 'none';
+        secGames.style.marginTop = '24px';
       } else {
         secGames.style.display = 'none';
         secApps.style.display = 'block';
+        secApps.style.marginTop = '24px';
       }
 
       // Render Cards
