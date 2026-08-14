@@ -317,17 +317,6 @@
       gap: 16px;
     }
 
-    @keyframes fadeInCard {
-      from {
-        opacity: 0;
-        transform: translateY(6px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
     .card {
       background: var(--bg-card);
       backdrop-filter: blur(16px);
@@ -341,7 +330,6 @@
       cursor: pointer;
       position: relative;
       overflow: hidden;
-      animation: fadeInCard 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
 
     .card:hover {
@@ -897,9 +885,11 @@
         secApps.style.marginTop = '24px';
       }
 
-      // Render Cards
-      gridGames.innerHTML = games.map(createCardHTML).join('');
-      gridApps.innerHTML = apps.map(createCardHTML).join('');
+      // Render Cards (Only update DOM if content actually changed to eliminate flicker)
+      const newGamesHTML = games.map(createCardHTML).join('');
+      const newAppsHTML = apps.map(createCardHTML).join('');
+      if (gridGames.innerHTML !== newGamesHTML) gridGames.innerHTML = newGamesHTML;
+      if (gridApps.innerHTML !== newAppsHTML) gridApps.innerHTML = newAppsHTML;
     }
 
     function createCardHTML(item) {
