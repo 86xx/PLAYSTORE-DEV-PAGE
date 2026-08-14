@@ -287,14 +287,22 @@
       color: #ffffff;
     }
 
+    .section-block {
+      margin-top: 16px;
+    }
+
+    .section-block + .section-block {
+      margin-top: 36px;
+    }
+
     .section-title {
       font-family: 'Outfit', sans-serif;
       font-size: 1.25rem;
       font-weight: 700;
       display: flex;
       align-items: center;
-      gap: 10px;
-      margin: 28px 0 16px;
+      gap: 12px;
+      margin: 0 0 16px 0;
       color: var(--text-main);
     }
 
@@ -303,6 +311,7 @@
       flex: 1;
       height: 1px;
       background: var(--border-card);
+      transition: background-color 0.3s ease;
     }
 
     .grid {
@@ -482,7 +491,7 @@
     </div>
 
     <!-- Section Games -->
-    <div id="section-games">
+    <div id="section-games" class="section-block">
       <div class="section-title">
         <span>Games</span>
       </div>
@@ -490,7 +499,7 @@
     </div>
 
     <!-- Section Apps -->
-    <div id="section-apps" style="margin-top: 32px;">
+    <div id="section-apps" class="section-block">
       <div class="section-title">
         <span>Apps</span>
       </div>
