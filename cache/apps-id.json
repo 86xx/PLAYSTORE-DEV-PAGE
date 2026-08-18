@@ -72,6 +72,38 @@
     "type": "GAME"
   },
   {
+    "appId": "id.livumedia.sortpuzzle",
+    "title": "Water Sort: Color Puzzle",
+    "icon": "https://play-lh.googleusercontent.com/nBUT3hmBzwF3d8WS47GwTockQfHn8YtjexTPWOfuFUKyiIzHDHjBtRppPBzjPy54eXeWcS4snw_qQYly9Zt9-g",
+    "summary": "Urutkan cairan berwarna di dalam tabung! Sebuah permainan puzzle pengurutan air yang menyenangkan dan adiktif.",
+    "url": "https://play.google.com/store/apps/details?id=id.livumedia.sortpuzzle&hl=id&gl=id",
+    "type": "GAME"
+  },
+  {
+    "appId": "id.livumedia.mazeescape",
+    "title": "Maze Ball: Escape Puzzle",
+    "icon": "https://play-lh.googleusercontent.com/FInCAvyNEol_fHNwV6cywGXAyQviC1iWWQkteTlxb3HJHAf54NORsDVC-QsjdetVRubrao_7_B3F0oFAHbXFNg",
+    "summary": "Temukan jalan keluar dari labirin! Hindari musuh dan jebakan dalam teka-teki seru ini.",
+    "url": "https://play.google.com/store/apps/details?id=id.livumedia.mazeescape&hl=id&gl=id",
+    "type": "GAME"
+  },
+  {
+    "appId": "id.livumedia.mergeblock",
+    "title": "Merge Block 2048: Number Game",
+    "icon": "https://play-lh.googleusercontent.com/jbND9SwB0I2IlCjWfeMeXioNZ8CAWHVfjKliums0EbIgHHUzCWw0SNC_PHDmdNfFuLGKkNppmxqOv1ye30HpJg",
+    "summary": "Jatuhkan &amp; gabungkan balok angka! Gabungkan angka yang cocok untuk mencapai nilai yang lebih tinggi.",
+    "url": "https://play.google.com/store/apps/details?id=id.livumedia.mergeblock&hl=id&gl=id",
+    "type": "GAME"
+  },
+  {
+    "appId": "id.livumedia.tileconnect",
+    "title": "Tile Connect: Nature Puzzle",
+    "icon": "https://play-lh.googleusercontent.com/xlpDHI9rc-iICaYrjMhi_xJnMFIiLJ3VfaFHrWLTcYqh-iTgpIhFjJO1deFdqIDeM_C2P4O8radV7iNX5RM1Og",
+    "summary": "Hubungkan ubin yang cocok! Permainan puzzle mencocokkan pasangan bertema alam yang menyenangkan untuk mengasah otak Anda.",
+    "url": "https://play.google.com/store/apps/details?id=id.livumedia.tileconnect&hl=id&gl=id",
+    "type": "GAME"
+  },
+  {
     "appId": "com.axlhostdev.tankbubbleshooter",
     "title": "Bubble Shooter: Pop Puzzle",
     "icon": "https://play-lh.googleusercontent.com/qZ_bIfXEKKUAd8Bwn6LlxBH_VYHykbrO4thkA_7e-pKZXlsjIPJlVO9saInie9AA_uCsbJzwL-QY0jLlYVPBUQ",
